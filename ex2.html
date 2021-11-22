@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<select name="category">
+    <option value="0">------</option>
+    <option value="http://localhost:5555/1122/1team.json">한식</option>
+    <option value="http://localhost:5555/1122/2team.json">일식</option>
+<!--    <option selected>일식</option>-->
+    <option value="http://localhost:5555/1122/3team.json">프랜차이즈</option>
+
+</select>
+
+<select name="stores">
+
+</select>
+
+<ul class="details">
+
+</ul>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<script>
+
+
+$(document).ready(function (e){
+
+    let storesArray = [] // 가게정보 마음대로 끄집어내기 위해
+
+    $("select[name='category']").on("change", function (e){
+        const url = $("select[name='category'] option:selected").val() //val() value값 가져옴
+
+        if(!url){
+            return
+        }
+        $.getJSON(url, function (arr){
+            console.log(arr)
+            storesArray = arr
+
+            let str ='<option >------</option>'
+            for (let i = 0; i < arr.length; i++) {
+                const {sno,sname} = arr[i] //전개분해할당
+                console.log(sno, sname)
+                str += `<option value=${sno}>${sname}</option>`
+            } //end for
+            $("select[name='stores']").html(str)
+        })
+
+        // console.log(document.querySelector("select[name='category'] option:selected").val())
+        // option:selected -> jquerry서 밖에 못씀
+    })
+
+    $("select[name='stores']").on("change", function (e){
+        const sno = e.target.value
+
+        const filterResult = storesArray.filter(store => store.sno === sno)[0] //0 붙히면 배열로 출력이 아니라 배열 안 element로 출력됨
+
+        console.log(filterResult)
+
+        const menus =filterResult.menu.split(",") //,을 기준으로 나누기
+
+        console.log(menus)
+
+    })
+
+    // $.getJSON('http://localhost:5555/1122/1team.json', function (arr) {
+    //     console.log(arr)
+    // })
+
+})
+</script>
+
+
+</body>
+</html>
